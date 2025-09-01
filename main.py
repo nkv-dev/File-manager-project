@@ -17,6 +17,7 @@ os.makedirs(BASE_STORAGE, exist_ok=True)
 def get_user_folder():
     if 'user_id' not in session:
         session['user_id'] = str(uuid.uuid4())[:8]  # Generate unique ID
+        print(f"🆕 New user created: {session['user_id']}")
     
     user_folder = os.path.join(BASE_STORAGE, f"user_{session['user_id']}")
     os.makedirs(user_folder, exist_ok=True)
@@ -40,6 +41,18 @@ def get_files(current_path=''):
 @app.route('/favicon.ico')
 def favicon():
     return '', 204
+
+# Admin route to see all users
+@app.route('/admin')
+def admin():
+    users = []
+    if os.path.exists(BASE_STORAGE):
+        for folder in os.listdir(BASE_STORAGE):
+            if folder.startswith('user_'):
+                user_path = os.path.join(BASE_STORAGE, folder)
+                file_count = sum([len(files) for r, d, files in os.walk(user_path)])
+                users.append({'id': folder, 'files': file_count})
+    return f"<h2>Active Users:</h2>{'<br>'.join([f'{u["id"]}: {u["files"]} files' for u in users])}"
 
 # Main page - show all files
 @app.route('/')
