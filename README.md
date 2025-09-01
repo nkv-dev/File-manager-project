@@ -226,4 +226,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **⚠️ Disclaimer: This is a demo application. Do not use for sensitive data or production environments.**
 
-**Made with ❤️ for learning and educational purposes**
+**Made with ❤️ for learning and educational purposes**# File-manager-project
