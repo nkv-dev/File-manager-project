@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📁 Simple File Manager</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f0f2f5;
+        }
+        
+        .header {
+            background: #4267B2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .main-content {
+            flex: 2;
+        }
+        
+        .sidebar {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .feature-icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .upload-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .file-list {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .file-size {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #4267B2;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #42b883;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .upload-forms {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .upload-forms > div {
+            flex: 1;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .upload-forms {
+                flex-direction: column;
+            }
+            
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .file-actions {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📁 Simple Web File Manager</h1>
+        <p>Upload, Download, and Manage Your Files</p>
+        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 5px; margin-top: 10px;">
+            <strong>🆔 Your Session ID:</strong> {{ user_id }}
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="main-content">
+            <!-- Show success messages -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        
+        <!-- Security Disclaimer -->
+        <div class="upload-section" style="border-left: 4px solid #e74c3c; background: #fdf2f2;">
+            <h2>⚠️ Security Disclaimer</h2>
+            <p style="color: #721c24; margin: 10px 0;">
+                <strong>DO NOT upload sensitive files!</strong> This is a demo application. Avoid uploading:
+            </p>
+            <ul style="color: #721c24; margin-left: 20px;">
+                <li>Personal documents (ID cards, passports, certificates)</li>
+                <li>Financial information (bank statements, tax documents)</li>
+                <li>Private photos or videos</li>
+                <li>Confidential work files</li>
+                <li>Any data that could cause harm if leaked</li>
+            </ul>
+            <p style="color: #721c24; font-size: 14px; margin-top: 10px;">
+                <strong>Use only test files for demonstration purposes.</strong>
+            </p>
+        </div>
+        
+        <!-- Navigation -->
+        {% if current_path %}
+            <div class="upload-section">
+                <h2>📍 Current Location: /{{ current_path }}</h2>
+                <a href="/{{ current_path.rsplit('/', 1)[0] if '/' in current_path else '' }}" class="btn btn-primary">⬅️ Back to Parent Folder</a>
+            </div>
+        {% endif %}
+        
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h2>📤 Upload & Create</h2>
+            <div class="upload-forms">
+                <!-- File Upload -->
+                <div>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="current_path" value="{{ current_path or '' }}">
+                        <div class="form-group">
+                            <label>Choose File to Upload:</label>
+                            <input type="file" name="file" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">📤 Upload File</button>
+                    </form>
+                </div>
+                
+                <!-- Create Folder -->
+                <div>
+                    <form action="/create-folder" method="post">
+                        <input type="hidden" name="current_path" value="{{ current_path or '' }}">
+                        <div class="form-group">
+                            <label>Create New Folder:</label>
+                            <input type="text" name="folder_name" class="form-control" placeholder="Enter folder name" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">📁 Create Folder</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- File List -->
+        <div class="file-list">
+            <h2 style="padding: 20px; margin: 0; border-bottom: 1px solid #eee;">📂 Your Files</h2>
+            
+            {% if files %}
+                {% for file in files %}
+                    <div class="file-item">
+                        <div class="file-icon">
+                            {% if file.is_folder %}
+                                📁
+                            {% else %}
+                                📄
+                            {% endif %}
+                        </div>
+                        
+                        <div class="file-info">
+                            {% if file.is_folder %}
+                                <div class="file-name">
+                                    <a href="/{{ (current_path + '/' + file.name) if current_path else file.name }}" style="text-decoration: none; color: inherit;">
+                                        {{ file.name }}
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="file-name">{{ file.name }}</div>
+                                <div class="file-size">{{ file.size }} KB</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="file-actions">
+                            {% if not file.is_folder %}
+                                <a href="/download/{{ (current_path + '/' + file.name) if current_path else file.name }}" class="btn btn-primary">⬇️ Download</a>
+                            {% endif %}
+                            <a href="/delete/{{ (current_path + '/' + file.name) if current_path else file.name }}" class="btn btn-danger" 
+                               onclick="return confirm('Delete {{ file.name }}?')">🗑️ Delete</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">
+                    <h3>📂 No Files Yet</h3>
+                    <p>Upload your first file to get started!</p>
+                </div>
+            {% endif %}
+        </div>
+        </div>
+        
+        <!-- Sidebar with Features -->
+        <div class="sidebar">
+            <h2>🚀 Project Features</h2>
+            
+            <div class="feature-item">
+                <div class="feature-icon">📤</div>
+                <div>
+                    <strong>File Upload</strong><br>
+                    <small>Upload any file type securely</small>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">📥</div>
+                <div>
+                    <strong>File Download</strong><br>
+                    <small>Download files with one click</small>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">📁</div>
+                <div>
+                    <strong>Folder Management</strong><br>
+                    <small>Create and navigate folders</small>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">🗑️</div>
+                <div>
+                    <strong>Delete Files</strong><br>
+                    <small>Remove unwanted files safely</small>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">📱</div>
+                <div>
+                    <strong>Mobile Friendly</strong><br>
+                    <small>Works on all devices</small>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">🔒</div>
+                <div>
+                    <strong>Secure Storage</strong><br>
+                    <small>Safe file handling</small>
+                </div>
+            </div>
+            
+            <h3>🛠️ Technologies</h3>
+            <div style="margin-top: 15px;">
+                <span style="background: #3776ab; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin: 2px;">Python</span>
+                <span style="background: #e34c26; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin: 2px;">HTML</span>
+                <span style="background: #1572b6; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin: 2px;">CSS</span>
+                <span style="background: #f7df1e; color: black; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin: 2px;">JavaScript</span>
+                <span style="background: #000; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin: 2px;">Flask</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <h3>🎓 College Project - Web File Manager</h3>
+        <p>Built with Python Flask | Simple & Secure File Management</p>
+        <p style="margin-top: 10px; font-size: 14px; opacity: 0.8;">
+            📚 Perfect for learning web development concepts<br>
+            🚀 Demonstrates full-stack development skills
+        </p>
+    </div>
+    
+    <script>
+        // Auto-hide success messages
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 3000);
+    </script>
+</body>
+</html>
