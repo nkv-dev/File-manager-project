@@ -8,6 +8,7 @@ import uuid
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = 'college-project-2025'
+app.permanent_session_lifetime = 86400 * 30  # 30 days
 
 # Configuration
 BASE_STORAGE = 'storage'  # Base storage directory
@@ -17,6 +18,7 @@ os.makedirs(BASE_STORAGE, exist_ok=True)
 def get_user_folder():
     if 'user_id' not in session:
         session['user_id'] = str(uuid.uuid4())[:8]  # Generate unique ID
+        session.permanent = True  # Make session persistent
         print(f"🆕 New user created: {session['user_id']}")
     
     user_folder = os.path.join(BASE_STORAGE, f"user_{session['user_id']}")
@@ -41,6 +43,18 @@ def get_files(current_path=''):
 @app.route('/favicon.ico')
 def favicon():
     return '', 204
+
+# Recover user session
+@app.route('/user/<user_id>')
+def recover_session(user_id):
+    if len(user_id) == 8 and os.path.exists(os.path.join(BASE_STORAGE, f'user_{user_id}')):
+        session['user_id'] = user_id
+        session.permanent = True
+        flash(f'Welcome back! Session recovered for user {user_id}')
+        return redirect('/')
+    else:
+        flash('Invalid user ID')
+        return redirect('/')
 
 # Admin route to see all users
 @app.route('/admin')
