@@ -23,6 +23,7 @@ A clean, secure web-based file management system built with Python Flask featuri
 - ✅ **Feature Sidebar** - Showcases project capabilities
 - ✅ **User ID Display** - Shows current session identifier
 - ✅ **Breadcrumb Navigation** - Easy folder navigation
+- ✅ **Admin Panel** - Monitor all users and files at `/admin`
 
 ## 🛠️ Technologies Used
 
@@ -126,6 +127,18 @@ BASE_STORAGE = 'storage'            # Base storage directory
 - **User Isolation** - Complete separation of user data
 - **Disclaimer** - Warns against sensitive file uploads
 
+## 📊 Admin Monitoring
+
+### **Monitor Users & Files**
+- **Admin URL**: `http://localhost:5000/admin` (local) or `https://your-app.onrender.com/admin` (deployed)
+- **View**: All active users, file counts, and file names
+- **Real-time**: Updates as users upload/delete files
+
+### **Deployment Limitations**
+- **Render/Railway**: Can see file names but NOT file contents
+- **Local Development**: Full file system access
+- **Ephemeral Storage**: Files deleted on each deployment
+
 ## ⚠️ Known Limitations
 
 ### **Current Issues**
@@ -134,6 +147,7 @@ BASE_STORAGE = 'storage'            # Base storage directory
 - **File Size Limits** - No upload size restrictions implemented
 - **No File Validation** - Accepts any file type
 - **Memory Usage** - Large files may cause issues
+- **Admin Access** - No password protection on `/admin`
 
 ### **Not Suitable For**
 - Production file storage
